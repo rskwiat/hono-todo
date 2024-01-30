@@ -12,7 +12,7 @@ function getTasks (page = 1) {
   };
 }
 
-function createTask (task) {
+function createTask(task) {
   const { name, completed } = task;
   const result = db.run("INSERT INTO todo (name, completed) VALUES (@name, @completed)", { name, completed });
 
@@ -25,14 +25,14 @@ function createTask (task) {
   }
 }
 
-function getTask (id) {
+function getTask(id) {
   const data = db.query(`SELECT * FROM todo WHERE todo.id = ${id}` , []);
   return {
     data,
   }
 }
 
-function deleteTask (id) {
+function deleteTask(id) {
   const data = db.run(`DELETE FROM todo WHERE todo.id = ${id}` , []);
   let message = "There was an error deleting the task";
   if (data.changes) {
@@ -40,36 +40,22 @@ function deleteTask (id) {
   }
   return {
     message,
+    data,
   }
 }
 
-function updateTaskStatus(body, id) {
+function updateTask(body, id) {
+  // validation to checck if name and body exist
+
   const data = db.run(`
-    UPDATE todo
-    SET
-      completed = ?
-    WHERE
-      todo.id = ${id}`, [body]);
+      UPDATE todo
+      SET
+        name = ?,
+        completed = ?
+      WHERE
+        todo.id = ${id}`, [body.name, body.completed]);    
 
-  let message = "error"
-  if (data.changes) {
-    message = "Task updated"
-  }
-  return {
-    message
-  }
-}
-
-
-function updateTaskName(body, id) {
-  const data = db.run(`
-    UPDATE todo
-    SET
-      name = ?
-    WHERE
-      todo.id = ${id}`, [body.name]);
-
-  let message = "error"
+  let message = "An error occured"
   if (data.changes) {
     message = "Task updated"
   }
@@ -82,7 +68,6 @@ module.exports = {
   createTask,
   getTasks,
   getTask,
-  updateTaskStatus,
-  updateTaskName,
+  updateTask,
   deleteTask,
 }

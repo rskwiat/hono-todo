@@ -1,44 +1,54 @@
-import fs from "fs";
+import { useEffect } from 'react';
+import { create } from 'zustand';
 import './App.css'
 
-import tasks from "./task";
 import TaskItem from './components/taskItem';
+import Button from './components/button';
 
-const updateTasks = (value) => {
-  fs.readWriteFile("./task", value);
-}; 
+
+const useTaskStore = create((set) => ({
+  tasks: {},
+  fetchTasks: async () => {
+      const res = await fetch("http://localhost:3000/api/tasks");
+      const data = await res.json();
+      set({ tasks: data.data });
+  },
+  deleteTask: async (id) => {
+    await fetch(`http://localhost:3000/api/tasks/${id}`, { method: "delete" })
+    const res = await fetch("http://localhost:3000/api/tasks");
+    const data = await res.json();
+    set({ tasks: data.data });
+  },
+  // updateTask: async ()
+}));
+
 
 function App() {
+  const { fetchTasks, deleteTask, tasks } = useTaskStore((state) => state);
 
-  const onCheck = (e, task) => {
-    // e.target.value
-    //modified data -> write to the tasks file
-    // fs.writeFile()
-    // ta
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
-    const updatedTask = {
-      ...task,
-      completed: e.target.value === "on" ? true : false,
-    };
-
-    updateTasks(updatedTask);
-  };
+  if (tasks.length > 0) {
+    return tasks.map((item) => {
+      return (
+        <div key={item.id}>
+            {item.name}
+            
+          <Button
+            onClick={() => deleteTask(item.id)}
+          label="delete" />    
+        </div>
+      );
+    });
+  }
 
   return (
-    <>
-      <div>
-        {tasks.map((task) => (
-          <TaskItem 
-            key={task.id}
-            id={task.id}
-            name={task.name}
-            completed={task.completed}
-            onCheck={(e) => onCheck(e, task)}
-          />
-        ))}
-        </div>
-    </>
-  )
+    <div>
+      <h1>Add new tasks</h1>
+    </div>
+  );
 }
 
 export default App

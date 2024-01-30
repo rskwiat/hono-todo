@@ -21,10 +21,7 @@ router.delete("/tasks/:id", (req, res) => {
 
 router.patch("/tasks/:id", async (req, res) => {
   try {
-    //modify status or completed status based on body
-
-    // res.json(tasks.updateTaskStatus(req.body.completed, req.params.id));
-    res.json(tasks.updateTaskName(req.body, req.params.id));
+    res.json(tasks.updateTask(req.body, req.params.id));
   } catch(err) {
     console.error("err", err);
   }
