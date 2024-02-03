@@ -8,14 +8,18 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "server": "node --watch ./server/index.cjs"
+    "server": "node --watch ./server/index.cjs",
+    "test": "jest"
   },
   "dependencies": {
     "better-sqlite3": "^9.3.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "jest": "^29.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "sqlite3": "^5.1.7",
+    "supertest": "^6.3.4",
     "uuid": "^9.0.1",
     "zustand": "^4.5.0"
   },
