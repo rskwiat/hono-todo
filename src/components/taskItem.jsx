@@ -11,6 +11,7 @@ const TaskItem = ({ name, id, completed, onCheck }) => {
         onChange={onCheck}
       />
       {name}
+      
       {/* buttons for edit and delete */}
     </div>
   );

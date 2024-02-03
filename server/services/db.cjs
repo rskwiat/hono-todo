@@ -1,19 +1,11 @@
 const path = require("path");
-const sqlite = require("better-sqlite3");
-const db = new sqlite(path.resolve("todos.db"), {
-  fileMustExist: true 
+const sqlite3 = require('sqlite3').verbose();
+const Database = path.resolve("todos.db");
+
+const db = new sqlite3.Database(Database, sqlite3.OPEN_READWRITE, (err) => {
+  if (err) {
+    return console.error(err.message);
+  }
 });
 
-function query (sql, params) {
-  return db.prepare(sql).all(params);
-}
-
-function run (sql, params) {
-  return db.prepare(sql).run(params);
-}
-
-
-module.exports = {
-  query,
-  run,
-};
+module.exports = db;
