@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix",
     "dev:studio": "npx drizzle-kit studio",
     "migrate:gen": "npx drizzle-kit generate",
     "migrate:push": "npx drizzle-kit push",

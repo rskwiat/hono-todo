@@ -1,8 +1,8 @@
 
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
-import { NOT_FOUND, OK, UNPROCESSABLE_ENTITY } from '@/constants/status-codes';
-import { createTasksSchema } from '@/db/schema';
+import { NOT_FOUND, OK, UNPROCESSABLE_ENTITY, NO_CONTENT } from '@/constants/status-codes';
+import { createTasksSchema, insertTasksSchema, patchTasksSchema } from '@/db/schema';
 import createErrorSchema from '@/middlewares/open-api/create-error-schema';
 
 const tags = ['tasks'];
@@ -27,6 +27,14 @@ const IdParamsSchema = z.object({
   }),
 });
 
+const notFoundSchema = z.object({
+  message: z.string()
+}).openapi({
+  example: {
+    message: 'Not Found'
+  }
+});
+
 export const listTasks = createRoute({
   tags,
   method: 'get',
@@ -42,6 +50,40 @@ export const listTasks = createRoute({
     },
   },
 });
+
+export const createTask = createRoute({
+  tags,
+  method: 'post',
+  path: '/tasks',
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: ListSchema
+        },
+      },
+      required: true,
+    },
+  },
+  responses: {
+    [OK]: {
+      content: {
+        'application/json': {
+          schema: insertTasksSchema
+        }
+      },
+      description: 'Inserted Task'
+    },
+    [UNPROCESSABLE_ENTITY]: {
+      content: {
+        'application/json': {
+          schema: createErrorSchema(insertTasksSchema),
+        }
+      },
+      description: 'Validation Issues'
+    }
+  },
+})
 
 export const getSingleTask = createRoute({
   tags,
@@ -62,13 +104,7 @@ export const getSingleTask = createRoute({
     [NOT_FOUND]: {
       content: {
         'application/json': {
-          schema: z.object({
-            message: z.string()
-          }).openapi({
-            example: {
-              message: 'Not Found'
-            }
-          })
+          schema: notFoundSchema
         },
       },
       description: 'Not Found'
@@ -84,6 +120,82 @@ export const getSingleTask = createRoute({
   }
 });
 
+export const updateTask = createRoute({
+  tags,
+  method: 'patch',
+  path: '/tasks/:id',
+  request: {
+    params: IdParamsSchema,
+    body: {
+      content: {
+        'application/json': {
+          schema: patchTasksSchema
+        }
+      }
+    }
+  },
+  responses: {
+    [OK]: {
+      content: {
+        'application/json': {
+          schema: createTasksSchema
+        }
+      },
+      description: 'The updated task'
+    },
+    [NOT_FOUND]: {
+      content: {
+        'application/json': {
+          schema: notFoundSchema
+        }
+      },
+      description: 'Task not found'
+    },
+    [UNPROCESSABLE_ENTITY]: {
+      content: {
+        "application/json": {
+          schema: createErrorSchema(patchTasksSchema)
+            .or(createErrorSchema(IdParamsSchema))
+        },
+      },
+      description: 'Validation Errors'
+    }
+  }
+});
+
+export const removeTask = createRoute({
+  tags,
+  method: 'delete',
+  path: 'tasks/:id',
+  request: {
+    params: IdParamsSchema
+  },
+  responses: {
+    [NO_CONTENT]: {
+      description: 'Task deleted'
+    },
+    [NOT_FOUND]: {
+      content: {
+        'application/json': {
+          schema: notFoundSchema
+        }
+      },
+      description: 'Task not found'
+    },
+    [UNPROCESSABLE_ENTITY]: {
+      content: {
+        "application/json": {
+          schema: createErrorSchema(IdParamsSchema)
+        },
+      },
+      description: 'Validation Errors'
+    }
+  }
+})
+
 
 export type ListTasksRoute = typeof listTasks;
 export type GetSingleTaskRoute = typeof getSingleTask;
+export type PatchSingleTaskRoute = typeof updateTask;
+export type CreateTaskRoute = typeof createTask;
+export type RemoveTaskRoute = typeof removeTask;

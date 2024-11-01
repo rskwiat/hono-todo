@@ -1,8 +1,24 @@
+import { eq } from 'drizzle-orm';
 
 import type { AppRouteHandler } from '@/lib/types'
-import type { ListTasksRoute, GetSingleTaskRoute } from './tasks.routes';
-import { OK, NOT_FOUND, } from '@/constants/status-codes';
+
+import {
+  OK,
+  NOT_FOUND,
+  UNPROCESSABLE_ENTITY,
+  NO_CONTENT,
+} from '@/constants/status-codes';
+
 import db from '@/db';
+import { tasks } from "@/db/schema";
+
+import type {
+  ListTasksRoute,
+  GetSingleTaskRoute,
+  CreateTaskRoute,
+  PatchSingleTaskRoute,
+  RemoveTaskRoute
+} from './tasks.routes';
 
 export const listTasks: AppRouteHandler<ListTasksRoute> = async (c) => {
   const tasks = await db.query.tasks.findMany();
@@ -27,4 +43,56 @@ export const getSingleTask: AppRouteHandler<GetSingleTaskRoute> = async (c) => {
   }
 
   return c.json(task, OK);
+}
+
+export const createSingleTask: AppRouteHandler<CreateTaskRoute> = async (c) => {
+  const task = c.req.valid('json');
+
+  const [inserted] = await db.insert(tasks).values(task).returning();
+  return c.json(inserted, OK);
+};
+
+export const updateTask: AppRouteHandler<PatchSingleTaskRoute> = async (c) => {
+  const { id } = c.req.valid('param');
+  const updates = c.req.valid('json');
+
+  if (Object.keys(updates).length === 0) {
+    return c.json({
+      success: false,
+      error: {
+        issues: [
+          {
+            code: 'Invalid Update',
+            path: [],
+            message: 'No Updates'
+          },
+        ],
+        name: 'Zod Error'
+      },
+    }, UNPROCESSABLE_ENTITY)
+  }
+
+  const [task] = await db.update(tasks)
+    .set(updates)
+    .where(eq(tasks.id, id))
+    .returning();
+
+  if (!task) {
+    return c.json({
+      message: 'Not Found'
+    }, NOT_FOUND);
+  }
+
+  return c.json(task, OK);
+}
+
+export const removeTask: AppRouteHandler<RemoveTaskRoute> = async (c) => {
+  const { id } = c.req.valid('param');
+  const result = await db.delete(tasks).where(eq(tasks.id, id));
+  if (result.rowsAffected === 0) {
+    return c.json({
+      message: 'Not Found'
+    }, NOT_FOUND)
+  }
+  return c.body(null, NO_CONTENT)
 }

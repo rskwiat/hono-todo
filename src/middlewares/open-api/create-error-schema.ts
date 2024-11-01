@@ -1,7 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-// eslint-disable-next-line ts/ban-ts-comment
-// @ts-expect-error
+// @ts-expect-error Union
 export type ZodSchema = z.ZodUnion | z.AnyZodObject | z.ZodArray<z.AnyZodObject>;
 
 const createErrorSchema = <
