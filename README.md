@@ -32,7 +32,7 @@ Test
 `npm test`
 
 
-## Enddpoints
+## Endpoints
 
 |||
 |-|-|
