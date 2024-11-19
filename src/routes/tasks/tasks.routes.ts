@@ -1,15 +1,17 @@
 
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
-import { NOT_FOUND, OK, UNPROCESSABLE_ENTITY, NO_CONTENT } from '@/constants/status-codes';
 import { createTasksSchema, insertTasksSchema, patchTasksSchema } from '@/db/schema';
 import createErrorSchema from '@/middlewares/open-api/create-error-schema';
+
+import * as HttpStatusCodes from '@/constants/status-codes';
+import * as HttpStatusMessage from '@/constants/status-messages';
 
 const tags = ['tasks'];
 
 const ListSchema = z.object({
   name: z.string().openapi({
-    example: 'task name',
+    example: 'Task Name',
   }),
   completed: z.boolean().openapi({
     example: false,
@@ -31,7 +33,7 @@ const notFoundSchema = z.object({
   message: z.string()
 }).openapi({
   example: {
-    message: 'Not Found'
+    message: HttpStatusMessage.NOT_FOUND
   }
 });
 
@@ -40,7 +42,7 @@ export const listTasks = createRoute({
   method: 'get',
   path: '/tasks',
   responses: {
-    [OK]: {
+    [HttpStatusCodes.OK]: {
       content: {
         'application/json': {
           schema: z.array(ListSchema),
@@ -66,7 +68,7 @@ export const createTask = createRoute({
     },
   },
   responses: {
-    [OK]: {
+    [HttpStatusCodes.OK]: {
       content: {
         'application/json': {
           schema: insertTasksSchema
@@ -74,7 +76,7 @@ export const createTask = createRoute({
       },
       description: 'Inserted Task'
     },
-    [UNPROCESSABLE_ENTITY]: {
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
         'application/json': {
           schema: createErrorSchema(insertTasksSchema),
@@ -93,7 +95,7 @@ export const getSingleTask = createRoute({
     params: IdParamsSchema
   },
   responses: {
-    [OK]: {
+    [HttpStatusCodes.OK]: {
       content: {
         'application/json': {
           schema: createTasksSchema
@@ -101,7 +103,7 @@ export const getSingleTask = createRoute({
       },
       description: 'The Requested task'
     },
-    [NOT_FOUND]: {
+    [HttpStatusCodes.NOT_FOUND]: {
       content: {
         'application/json': {
           schema: notFoundSchema
@@ -109,7 +111,7 @@ export const getSingleTask = createRoute({
       },
       description: 'Not Found'
     },
-    [UNPROCESSABLE_ENTITY]: {
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
         'application/json': {
           schema: createErrorSchema(IdParamsSchema),
@@ -135,7 +137,7 @@ export const updateTask = createRoute({
     }
   },
   responses: {
-    [OK]: {
+    [HttpStatusCodes.OK]: {
       content: {
         'application/json': {
           schema: createTasksSchema
@@ -143,7 +145,7 @@ export const updateTask = createRoute({
       },
       description: 'The updated task'
     },
-    [NOT_FOUND]: {
+    [HttpStatusCodes.NOT_FOUND]: {
       content: {
         'application/json': {
           schema: notFoundSchema
@@ -151,7 +153,7 @@ export const updateTask = createRoute({
       },
       description: 'Task not found'
     },
-    [UNPROCESSABLE_ENTITY]: {
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
         "application/json": {
           schema: createErrorSchema(patchTasksSchema)
@@ -171,10 +173,10 @@ export const removeTask = createRoute({
     params: IdParamsSchema
   },
   responses: {
-    [NO_CONTENT]: {
+    [HttpStatusCodes.NO_CONTENT]: {
       description: 'Task deleted'
     },
-    [NOT_FOUND]: {
+    [HttpStatusCodes.NOT_FOUND]: {
       content: {
         'application/json': {
           schema: notFoundSchema
@@ -182,7 +184,7 @@ export const removeTask = createRoute({
       },
       description: 'Task not found'
     },
-    [UNPROCESSABLE_ENTITY]: {
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
         "application/json": {
           schema: createErrorSchema(IdParamsSchema)

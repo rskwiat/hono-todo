@@ -1,11 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 
-import type { AppBindings } from './types';
-import {
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-  UNPROCESSABLE_ENTITY
-} from '@/constants/status-codes';
+import type { AppBindings, AppOpenAPI } from './types';
+
+import * as HttpStatusCodes from '@/constants/status-codes';
 import { Logger } from '@/middlewares/logger';
 
 export function createRouter() {
@@ -16,7 +13,7 @@ export function createRouter() {
         return c.json({
           succeess: result.success,
           error: result.error
-        }, UNPROCESSABLE_ENTITY)
+        }, HttpStatusCodes.UNPROCESSABLE_ENTITY)
       }
     },
   });
@@ -29,14 +26,18 @@ export default function createApp() {
   app.notFound((c) => {
     return c.json({
       message: `Not found - ${c.req.path}`
-    }, NOT_FOUND);
+    }, HttpStatusCodes.NOT_FOUND);
   });
 
   app.onError((err, c) => {
     return c.json({
       message: err.message
-    }, INTERNAL_SERVER_ERROR);
+    }, HttpStatusCodes.INTERNAL_SERVER_ERROR);
   });
 
   return app;
 }
+
+export function createTestApp<R extends AppOpenAPI>(router: R) {
+  return createApp().route('/', router);
+};

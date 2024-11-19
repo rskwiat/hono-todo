@@ -2,12 +2,8 @@ import { eq } from 'drizzle-orm';
 
 import type { AppRouteHandler } from '@/lib/types'
 
-import {
-  OK,
-  NOT_FOUND,
-  UNPROCESSABLE_ENTITY,
-  NO_CONTENT,
-} from '@/constants/status-codes';
+import * as HttpStatusCodes from '@/constants/status-codes';
+import * as HttpStatusMessage from '@/constants/status-messages';
 
 import db from '@/db';
 import { tasks } from "@/db/schema";
@@ -22,7 +18,7 @@ import type {
 
 export const listTasks: AppRouteHandler<ListTasksRoute> = async (c) => {
   const tasks = await db.query.tasks.findMany();
-  return c.json(tasks, OK);
+  return c.json(tasks, HttpStatusCodes.OK);
 };
 
 export const getSingleTask: AppRouteHandler<GetSingleTaskRoute> = async (c) => {
@@ -36,20 +32,20 @@ export const getSingleTask: AppRouteHandler<GetSingleTaskRoute> = async (c) => {
   if (!task) {
     return c.json(
       {
-        message: 'Task not found',
+        message: HttpStatusMessage.NOT_FOUND,
       },
-      NOT_FOUND,
+      HttpStatusCodes.NOT_FOUND,
     );
   }
 
-  return c.json(task, OK);
+  return c.json(task, HttpStatusCodes.OK);
 }
 
 export const createSingleTask: AppRouteHandler<CreateTaskRoute> = async (c) => {
   const task = c.req.valid('json');
 
   const [inserted] = await db.insert(tasks).values(task).returning();
-  return c.json(inserted, OK);
+  return c.json(inserted, HttpStatusCodes.OK);
 };
 
 export const updateTask: AppRouteHandler<PatchSingleTaskRoute> = async (c) => {
@@ -69,7 +65,7 @@ export const updateTask: AppRouteHandler<PatchSingleTaskRoute> = async (c) => {
         ],
         name: 'Zod Error'
       },
-    }, UNPROCESSABLE_ENTITY)
+    }, HttpStatusCodes.UNPROCESSABLE_ENTITY)
   }
 
   const [task] = await db.update(tasks)
@@ -79,11 +75,11 @@ export const updateTask: AppRouteHandler<PatchSingleTaskRoute> = async (c) => {
 
   if (!task) {
     return c.json({
-      message: 'Not Found'
-    }, NOT_FOUND);
+      message: HttpStatusMessage.NOT_FOUND
+    }, HttpStatusCodes.NOT_FOUND);
   }
 
-  return c.json(task, OK);
+  return c.json(task, HttpStatusCodes.OK);
 }
 
 export const removeTask: AppRouteHandler<RemoveTaskRoute> = async (c) => {
@@ -91,8 +87,8 @@ export const removeTask: AppRouteHandler<RemoveTaskRoute> = async (c) => {
   const result = await db.delete(tasks).where(eq(tasks.id, id));
   if (result.rowsAffected === 0) {
     return c.json({
-      message: 'Not Found'
-    }, NOT_FOUND)
+      message: HttpStatusMessage.NOT_FOUND
+    }, HttpStatusCodes.NOT_FOUND)
   }
-  return c.body(null, NO_CONTENT)
+  return c.body(null, HttpStatusCodes.NO_CONTENT)
 }

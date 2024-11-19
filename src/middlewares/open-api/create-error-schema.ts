@@ -1,4 +1,4 @@
-import { z } from "@hono/zod-openapi";
+import { z } from '@hono/zod-openapi';
 
 // @ts-expect-error Union
 export type ZodSchema = z.ZodUnion | z.AnyZodObject | z.ZodArray<z.AnyZodObject>;

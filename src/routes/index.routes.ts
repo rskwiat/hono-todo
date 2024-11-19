@@ -1,7 +1,7 @@
 
 import { createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
-import { OK } from '@/constants/status-codes';
+import * as HttpStatusCodes from '@/constants/status-codes';
 
 const tags = ['index'];
 
@@ -16,7 +16,7 @@ export const healthcheck = createRoute({
   method: 'get',
   path: '/healthcheck',
   responses: {
-    [OK]: {
+    [HttpStatusCodes.OK]: {
       content: {
         'application/json': {
           schema: healthcheckSchema,
