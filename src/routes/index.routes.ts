@@ -1,15 +1,9 @@
 
 import { createRoute } from '@hono/zod-openapi';
-import { z } from 'zod';
 import * as HttpStatusCodes from '@/constants/status-codes';
+import { healthcheckSchema } from './schemas';
 
 const tags = ['index'];
-
-const healthcheckSchema = z.object({
-  message: z.string().openapi({
-    example: 'API is up and running'
-  })
-});
 
 export const healthcheck = createRoute({
   tags,

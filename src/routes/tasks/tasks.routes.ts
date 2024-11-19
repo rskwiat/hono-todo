@@ -5,37 +5,10 @@ import { createTasksSchema, insertTasksSchema, patchTasksSchema } from '@/db/sch
 import createErrorSchema from '@/middlewares/open-api/create-error-schema';
 
 import * as HttpStatusCodes from '@/constants/status-codes';
-import * as HttpStatusMessage from '@/constants/status-messages';
+
+import { notFoundSchema, ListSchema, IdParamsSchema } from '../schemas';
 
 const tags = ['tasks'];
-
-const ListSchema = z.object({
-  name: z.string().openapi({
-    example: 'Task Name',
-  }),
-  completed: z.boolean().openapi({
-    example: false,
-  }),
-});
-
-const IdParamsSchema = z.object({
-  id: z.coerce.number().openapi({
-    param: {
-      name: "id",
-      in: "path",
-    },
-    required: ["id"],
-    example: 42,
-  }),
-});
-
-const notFoundSchema = z.object({
-  message: z.string()
-}).openapi({
-  example: {
-    message: HttpStatusMessage.NOT_FOUND
-  }
-});
 
 export const listTasks = createRoute({
   tags,

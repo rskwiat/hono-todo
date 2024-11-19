@@ -16,6 +16,8 @@ import type {
   RemoveTaskRoute
 } from './tasks.routes';
 
+import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from '@/constants/constants';
+
 export const listTasks: AppRouteHandler<ListTasksRoute> = async (c) => {
   const tasks = await db.query.tasks.findMany();
   return c.json(tasks, HttpStatusCodes.OK);
@@ -58,9 +60,9 @@ export const updateTask: AppRouteHandler<PatchSingleTaskRoute> = async (c) => {
       error: {
         issues: [
           {
-            code: 'Invalid Update',
+            code: ZOD_ERROR_CODES.INVALID_UPDATES,
             path: [],
-            message: 'No Updates'
+            message: ZOD_ERROR_MESSAGES.NO_UPDATES,
           },
         ],
         name: 'Zod Error'

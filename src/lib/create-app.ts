@@ -3,6 +3,8 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import type { AppBindings, AppOpenAPI } from './types';
 
 import * as HttpStatusCodes from '@/constants/status-codes';
+import * as HttpStatusMessages from '@/constants/status-messages';
+
 import { Logger } from '@/middlewares/logger';
 
 export function createRouter() {
@@ -25,7 +27,7 @@ export default function createApp() {
 
   app.notFound((c) => {
     return c.json({
-      message: `Not found - ${c.req.path}`
+      message: `${HttpStatusMessages.NOT_FOUND} - ${c.req.path}`
     }, HttpStatusCodes.NOT_FOUND);
   });
 
