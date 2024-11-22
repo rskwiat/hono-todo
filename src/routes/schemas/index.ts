@@ -27,10 +27,10 @@ export const ListSchema = z.object({
 export const IdParamsSchema = z.object({
   id: z.coerce.number().openapi({
     param: {
-      name: "id",
-      in: "path",
+      name: 'id',
+      in: 'path',
     },
-    required: ["id"],
+    required: ['id'],
     example: 42,
   }),
 });

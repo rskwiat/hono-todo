@@ -1,12 +1,12 @@
 import { eq } from 'drizzle-orm';
 
-import type { AppRouteHandler } from '@/lib/types'
+import type { AppRouteHandler } from '@/lib/types';
 
 import * as HttpStatusCodes from '@/constants/status-codes';
 import * as HttpStatusMessage from '@/constants/status-messages';
 
 import db from '@/db';
-import { tasks } from "@/db/schema";
+import { tasks } from '@/db/schema';
 
 import type {
   ListTasksRoute,
@@ -41,7 +41,7 @@ export const getSingleTask: AppRouteHandler<GetSingleTaskRoute> = async (c) => {
   }
 
   return c.json(task, HttpStatusCodes.OK);
-}
+};
 
 export const createSingleTask: AppRouteHandler<CreateTaskRoute> = async (c) => {
   const task = c.req.valid('json');
@@ -67,7 +67,7 @@ export const updateTask: AppRouteHandler<PatchSingleTaskRoute> = async (c) => {
         ],
         name: 'Zod Error'
       },
-    }, HttpStatusCodes.UNPROCESSABLE_ENTITY)
+    }, HttpStatusCodes.UNPROCESSABLE_ENTITY);
   }
 
   const [task] = await db.update(tasks)
@@ -82,7 +82,7 @@ export const updateTask: AppRouteHandler<PatchSingleTaskRoute> = async (c) => {
   }
 
   return c.json(task, HttpStatusCodes.OK);
-}
+};
 
 export const removeTask: AppRouteHandler<RemoveTaskRoute> = async (c) => {
   const { id } = c.req.valid('param');
@@ -90,7 +90,7 @@ export const removeTask: AppRouteHandler<RemoveTaskRoute> = async (c) => {
   if (result.rowsAffected === 0) {
     return c.json({
       message: HttpStatusMessage.NOT_FOUND
-    }, HttpStatusCodes.NOT_FOUND)
+    }, HttpStatusCodes.NOT_FOUND);
   }
-  return c.body(null, HttpStatusCodes.NO_CONTENT)
-}
+  return c.body(null, HttpStatusCodes.NO_CONTENT);
+};

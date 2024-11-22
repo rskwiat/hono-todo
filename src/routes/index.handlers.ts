@@ -1,5 +1,5 @@
 
-import type { AppRouteHandler } from '@/lib/types'
+import type { AppRouteHandler } from '@/lib/types';
 import type { HealthCheckRoute } from './index.routes';
 
 import { HEALTHCHECK_MESSAGE } from '@/constants/constants';

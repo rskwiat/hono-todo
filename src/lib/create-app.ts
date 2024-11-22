@@ -15,7 +15,7 @@ export function createRouter() {
         return c.json({
           succeess: result.success,
           error: result.error
-        }, HttpStatusCodes.UNPROCESSABLE_ENTITY)
+        }, HttpStatusCodes.UNPROCESSABLE_ENTITY);
       }
     },
   });

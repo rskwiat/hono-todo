@@ -10,4 +10,4 @@ export const ZOD_ERROR_CODES = {
 
 export const HEALTHCHECK_MESSAGE = {
   OK: 'App is running',
-}
+};

@@ -10,7 +10,7 @@ export function Logger() {
       http: {
         reqId: () => crypto.randomUUID(),
       }
-    })
+    });
   }
 
   return pinoLogger({

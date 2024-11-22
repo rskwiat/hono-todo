@@ -33,7 +33,7 @@ export const createTask = createRoute({
   request: {
     body: {
       content: {
-        "application/json": {
+        'application/json': {
           schema: ListSchema
         },
       },
@@ -58,7 +58,7 @@ export const createTask = createRoute({
       description: 'Validation Issues'
     }
   },
-})
+});
 
 export const getSingleTask = createRoute({
   tags,
@@ -128,7 +128,7 @@ export const updateTask = createRoute({
     },
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
-        "application/json": {
+        'application/json': {
           schema: createErrorSchema(patchTasksSchema)
             .or(createErrorSchema(IdParamsSchema))
         },
@@ -159,14 +159,14 @@ export const removeTask = createRoute({
     },
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
-        "application/json": {
+        'application/json': {
           schema: createErrorSchema(IdParamsSchema)
         },
       },
       description: 'Validation Errors'
     }
   }
-})
+});
 
 
 export type ListTasksRoute = typeof listTasks;
